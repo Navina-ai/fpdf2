@@ -1133,7 +1133,7 @@ class FPDF:
         s = f"BT {x * self.k:.2f} {(self.h - y) * self.k:.2f} Td ({txt2}) Tj ET"
         if self.underline and txt != "":
             s += " " + self._dounderline(x, y, txt)
-        if self.transparent:
+        if self.is_transparent:
             s = f"3 Tr {s} Q"
         elif self.fill_color != self.text_color:
             s = f"q {self.text_color} {s} Q"
