@@ -225,6 +225,7 @@ class FPDF:
         self.draw_color = "0 G"
         self.fill_color = "0 g"
         self.text_color = "0 g"
+        self.is_transparent = False
         self.ws = 0  # word spacing
         self.angle = 0  # used by deprecated method: rotate()
         self.font_cache_dir = font_cache_dir
@@ -628,6 +629,10 @@ class FPDF:
             self.text_color = f"{r / 255:.3f} g"
         else:
             self.text_color = f"{r / 255:.3f} {g / 255:.3f} {b / 255:.3f} rg"
+
+    def set_text_transparent(self, is_transparent=False):
+        """ if is_transparent = True then the text will be transparent"""
+        self.is_transparent = is_transparent
 
     def get_string_width(self, s, normalized=False):
         """Get width of a string in the current font"""
@@ -1128,7 +1133,9 @@ class FPDF:
         s = f"BT {x * self.k:.2f} {(self.h - y) * self.k:.2f} Td ({txt2}) Tj ET"
         if self.underline and txt != "":
             s += " " + self._dounderline(x, y, txt)
-        if self.fill_color != self.text_color:
+        if self.transparent:
+            s = f"3 Tr {s} Q"
+        elif self.fill_color != self.text_color:
             s = f"q {self.text_color} {s} Q"
         self._out(s)
 
